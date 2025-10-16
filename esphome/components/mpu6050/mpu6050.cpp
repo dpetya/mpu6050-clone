@@ -22,10 +22,12 @@ const float GRAVITY_EARTH = 9.80665f;
 
 void MPU6050Component::setup() {
   uint8_t who_am_i;
-  if (!this->read_byte(MPU6050_REGISTER_WHO_AM_I, &who_am_i) ||
-      (who_am_i != 0x68 && who_am_i != 0x70 && who_am_i != 0x98)) {
+    if (!this->read_byte(MPU6050_REGISTER_WHO_AM_I, &who_am_i)) {
     this->mark_failed();
     return;
+  }
+  if (who_am_i != 0x68 && who_am_i != 0x70 && who_am_i != 0x98) {
+    ESP_LOGW(TAG, "Unrecognized WHO_AM_I: 0x%02X; proceeding in clone mode", who_am_i);
   }
 
   ESP_LOGV(TAG, "  Setting up Power Management");
